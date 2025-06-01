@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { toast } from '@/hooks/use-toast';
 
 interface RegisterFormProps {
   onToggleMode: () => void;
@@ -23,11 +24,50 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validation
+    if (!name) {
+      toast({
+        title: t('error'),
+        description: t('requiredField') + ': ' + t('name'),
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    if (!email) {
+      toast({
+        title: t('error'),
+        description: t('requiredField') + ': ' + t('email'),
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    if (!password) {
+      toast({
+        title: t('error'),
+        description: t('requiredField') + ': ' + t('password'),
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    if (password.length < 6) {
+      toast({
+        title: t('error'),
+        description: t('passwordTooShort'),
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
       await register(email, password, name, role);
     } catch (error) {
       console.error('Register error:', error);
+      // Error toast is handled in AuthContext
     } finally {
       setIsLoading(false);
     }
@@ -50,6 +90,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
           <div className="space-y-2">
@@ -60,6 +101,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
           <div className="space-y-2">
@@ -70,11 +112,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="role">{t('role')}</Label>
-            <Select value={role} onValueChange={(value: 'parent' | 'teacher') => setRole(value)}>
+            <Select value={role} onValueChange={(value: 'parent' | 'teacher') => setRole(value)} disabled={isLoading}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -89,12 +132,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
             className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             disabled={isLoading}
           >
-            {isLoading ? 'Cargando...' : t('register')}
+            {isLoading ? t('loading') : t('register')}
           </Button>
         </form>
         <div className="mt-4 text-center">
-          <Button variant="link" onClick={onToggleMode}>
-            ¿Ya tienes cuenta? {t('login')}
+          <Button variant="link" onClick={onToggleMode} disabled={isLoading}>
+            {t('hasAccount')} {t('login')}
           </Button>
         </div>
       </CardContent>

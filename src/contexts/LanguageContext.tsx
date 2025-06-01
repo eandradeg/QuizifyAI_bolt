@@ -53,6 +53,38 @@ const translations: Translations = {
   theme: { es: 'Tema', en: 'Theme', de: 'Thema' },
   light: { es: 'Claro', en: 'Light', de: 'Hell' },
   dark: { es: 'Oscuro', en: 'Dark', de: 'Dunkel' },
+
+  // Toast messages - Authentication
+  loginSuccess: { es: 'Sesión iniciada correctamente', en: 'Login successful', de: 'Anmeldung erfolgreich' },
+  loginError: { es: 'Error al iniciar sesión', en: 'Login error', de: 'Anmeldefehler' },
+  registerSuccess: { es: 'Registro exitoso. Revisa tu correo para verificar tu cuenta', en: 'Registration successful. Check your email to verify your account', de: 'Registrierung erfolgreich. Überprüfen Sie Ihre E-Mail zur Kontobestätigung' },
+  registerError: { es: 'Error en el registro', en: 'Registration error', de: 'Registrierungsfehler' },
+  logoutSuccess: { es: 'Sesión cerrada correctamente', en: 'Logout successful', de: 'Abmeldung erfolgreich' },
+  logoutError: { es: 'Error al cerrar sesión', en: 'Logout error', de: 'Abmeldefehler' },
+  invalidCredentials: { es: 'Credenciales inválidas', en: 'Invalid credentials', de: 'Ungültige Anmeldeinformationen' },
+  userAlreadyExists: { es: 'El usuario ya existe', en: 'User already exists', de: 'Benutzer existiert bereits' },
+  
+  // Toast messages - General
+  loading: { es: 'Cargando...', en: 'Loading...', de: 'Laden...' },
+  success: { es: 'Éxito', en: 'Success', de: 'Erfolg' },
+  error: { es: 'Error', en: 'Error', de: 'Fehler' },
+  saveSuccess: { es: 'Guardado correctamente', en: 'Saved successfully', de: 'Erfolgreich gespeichert' },
+  saveError: { es: 'Error al guardar', en: 'Error saving', de: 'Fehler beim Speichern' },
+  deleteSuccess: { es: 'Eliminado correctamente', en: 'Deleted successfully', de: 'Erfolgreich gelöscht' },
+  deleteError: { es: 'Error al eliminar', en: 'Error deleting', de: 'Fehler beim Löschen' },
+  updateSuccess: { es: 'Actualizado correctamente', en: 'Updated successfully', de: 'Erfolgreich aktualisiert' },
+  updateError: { es: 'Error al actualizar', en: 'Error updating', de: 'Fehler beim Aktualisieren' },
+  connectionError: { es: 'Error de conexión', en: 'Connection error', de: 'Verbindungsfehler' },
+  
+  // Form validation
+  requiredField: { es: 'Este campo es requerido', en: 'This field is required', de: 'Dieses Feld ist erforderlich' },
+  invalidEmail: { es: 'Email inválido', en: 'Invalid email', de: 'Ungültige E-Mail' },
+  passwordTooShort: { es: 'La contraseña debe tener al menos 6 caracteres', en: 'Password must be at least 6 characters', de: 'Passwort muss mindestens 6 Zeichen haben' },
+  
+  // UI Labels
+  noAccount: { es: '¿No tienes cuenta?', en: "Don't have an account?", de: 'Kein Konto?' },
+  hasAccount: { es: '¿Ya tienes cuenta?', en: 'Already have an account?', de: 'Haben Sie bereits ein Konto?' },
+  confirmEmail: { es: 'Confirma tu email para completar el registro', en: 'Confirm your email to complete registration', de: 'Bestätigen Sie Ihre E-Mail, um die Registrierung abzuschließen' },
 };
 
 interface LanguageContextType {

@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { toast } from '@/hooks/use-toast';
 
 interface LoginFormProps {
   onToggleMode: () => void;
@@ -20,11 +21,32 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validation
+    if (!email) {
+      toast({
+        title: t('error'),
+        description: t('requiredField') + ': ' + t('email'),
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    if (!password) {
+      toast({
+        title: t('error'),
+        description: t('requiredField') + ': ' + t('password'),
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
       await login(email, password);
     } catch (error) {
       console.error('Login error:', error);
+      // Error toast is handled in AuthContext
     } finally {
       setIsLoading(false);
     }
@@ -48,6 +70,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="ejemplo@correo.com"
+              disabled={isLoading}
             />
           </div>
           <div className="space-y-2">
@@ -58,6 +81,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
           <Button
@@ -65,12 +89,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             disabled={isLoading}
           >
-            {isLoading ? 'Cargando...' : t('login')}
+            {isLoading ? t('loading') : t('login')}
           </Button>
         </form>
         <div className="mt-4 text-center">
-          <Button variant="link" onClick={onToggleMode}>
-            ¿No tienes cuenta? {t('register')}
+          <Button variant="link" onClick={onToggleMode} disabled={isLoading}>
+            {t('noAccount')} {t('register')}
           </Button>
         </div>
       </CardContent>
