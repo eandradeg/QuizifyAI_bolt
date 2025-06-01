@@ -1,5 +1,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
+import type { Tables } from '@/integrations/supabase/types';
 
 type UserRole = 'parent' | 'student' | 'teacher';
 
@@ -34,28 +37,75 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session in localStorage
-    const savedUser = localStorage.getItem('quizifyai_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setIsLoading(false);
+    // Get initial session
+    const getInitialSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        await fetchUserProfile(session.user);
+      }
+      setIsLoading(false);
+    };
+
+    getInitialSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session?.user?.email);
+      
+      if (session?.user) {
+        await fetchUserProfile(session.user);
+      } else {
+        setUser(null);
+      }
+      setIsLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
+
+  const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', supabaseUser.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return;
+      }
+
+      if (profile) {
+        setUser({
+          id: profile.id,
+          email: profile.email,
+          role: profile.role as UserRole,
+          name: profile.display_name,
+          avatar: profile.avatar_url || undefined,
+        });
+      }
+    } catch (error) {
+      console.error('Error in fetchUserProfile:', error);
+    }
+  };
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Mock login - replace with Supabase auth
-      const mockUser: User = {
-        id: '1',
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
-        role: email.includes('teacher') ? 'teacher' : email.includes('parent') ? 'parent' : 'student',
-        name: email.split('@')[0],
-      };
-      setUser(mockUser);
-      localStorage.setItem('quizifyai_user', JSON.stringify(mockUser));
+        password,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // User profile will be fetched automatically by the auth state change listener
     } catch (error) {
-      throw new Error('Error de autenticación');
+      console.error('Login error:', error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -64,25 +114,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (email: string, password: string, name: string, role: UserRole) => {
     setIsLoading(true);
     try {
-      // Mock registration - replace with Supabase auth
-      const newUser: User = {
-        id: Date.now().toString(),
+      const { data, error } = await supabase.auth.signUp({
         email,
-        role,
-        name,
-      };
-      setUser(newUser);
-      localStorage.setItem('quizifyai_user', JSON.stringify(newUser));
+        password,
+        options: {
+          data: {
+            display_name: name,
+            role: role,
+          },
+        },
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // The profile will be created automatically by the trigger we set up
+      // and the user will be set by the auth state change listener
     } catch (error) {
-      throw new Error('Error en el registro');
+      console.error('Registration error:', error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('quizifyai_user');
+  const logout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Logout error:', error);
+      }
+      setUser(null);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (

@@ -43,6 +43,20 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_enrollments_class"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_enrollments_student"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       classes: {
@@ -81,6 +95,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_classes_teacher"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       messages: {
@@ -109,6 +130,20 @@ export type Database = {
           sender_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_messages_receiver"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_messages_sender"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "messages_receiver_id_fkey"
             columns: ["receiver_id"]
@@ -145,6 +180,20 @@ export type Database = {
           student_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_parent_students_parent"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_parent_students_student"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "parent_students_parent_id_fkey"
             columns: ["parent_id"]
@@ -221,6 +270,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_questions_quiz"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "questions_quiz_id_fkey"
             columns: ["quiz_id"]
             isOneToOne: false
@@ -255,6 +311,20 @@ export type Database = {
           student_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_attempts_quiz"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_attempts_student"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "quiz_attempts_quiz_id_fkey"
             columns: ["quiz_id"]
@@ -304,6 +374,20 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_quizzes_class"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_quizzes_creator"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "quizzes_class_id_fkey"
             columns: ["class_id"]
             isOneToOne: false
@@ -352,6 +436,20 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_submissions_student"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_submissions_task"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "task_submissions_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
@@ -399,6 +497,20 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_tasks_class"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_tasks_creator"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "tasks_class_id_fkey"
             columns: ["class_id"]

@@ -1,9 +1,6 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { LanguageProvider } from '@/contexts/LanguageContext';
-import { ThemeProvider } from '@/contexts/ThemeContext';
 import LoginForm from '@/components/Auth/LoginForm';
 import RegisterForm from '@/components/Auth/RegisterForm';
 import Dashboard from './Dashboard';
@@ -11,7 +8,7 @@ import Quiz from './Quiz';
 import QuizCreator from '@/components/Quiz/QuizCreator';
 import Header from '@/components/Layout/Header';
 
-const AppContent = () => {
+const Index = () => {
   const { user, isLoading } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [currentView, setCurrentView] = useState<'dashboard' | 'quiz' | 'creator'>('dashboard');
@@ -71,18 +68,6 @@ const AppContent = () => {
   }
 
   return <Dashboard />;
-};
-
-const Index = () => {
-  return (
-    <ThemeProvider>
-      <LanguageProvider>
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
-      </LanguageProvider>
-    </ThemeProvider>
-  );
 };
 
 export default Index;
