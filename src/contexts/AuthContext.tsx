@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
@@ -63,11 +62,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Auth state changed:', event, session?.user?.email);
       
       if (session?.user) {
-        // Add a small delay to ensure the trigger has completed
-        if (event === 'SIGNED_UP') {
-          setTimeout(() => {
-            fetchUserProfile(session.user);
-          }, 1000);
+        // Add a small delay for new registrations to ensure the trigger has completed
+        if (event === 'SIGNED_IN') {
+          // Check if this is a new user by looking at the session metadata
+          const isNewUser = session.user.email_confirmed_at === session.user.created_at;
+          if (isNewUser) {
+            setTimeout(() => {
+              fetchUserProfile(session.user);
+            }, 1000);
+          } else {
+            await fetchUserProfile(session.user);
+          }
         } else {
           await fetchUserProfile(session.user);
         }
