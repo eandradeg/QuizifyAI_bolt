@@ -2,6 +2,8 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import Header from '@/components/Layout/Header';
 import ParentDashboard from '@/components/Dashboard/ParentDashboard';
 import TeacherDashboard from '@/components/Dashboard/TeacherDashboard';
@@ -10,8 +12,27 @@ import { Button } from '@/components/ui/button';
 import { BookOpen, Users, MessageSquare, Settings } from 'lucide-react';
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const { t } = useLanguage();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      navigate('/');
+    }
+  }, [user, isLoading, navigate]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   const renderDashboard = () => {
     switch (user?.role) {
@@ -28,21 +49,21 @@ const Dashboard = () => {
 
   const getNavItems = () => {
     const commonItems = [
-      { icon: BookOpen, label: t('quizzes'), href: '/quiz' },
-      { icon: MessageSquare, label: t('messages'), href: '/messages' },
-      { icon: Settings, label: t('settings'), href: '/settings' },
+      { icon: BookOpen, label: t('quizzes'), action: () => navigate('/quiz') },
+      { icon: MessageSquare, label: t('messages'), action: () => console.log('Navigate to messages') },
+      { icon: Settings, label: t('settings'), action: () => console.log('Navigate to settings') },
     ];
 
     if (user?.role === 'parent') {
       return [
-        { icon: Users, label: 'Mis Hijos', href: '/children' },
+        { icon: Users, label: 'Mis Hijos', action: () => console.log('Navigate to children') },
         ...commonItems,
       ];
     }
 
     if (user?.role === 'teacher') {
       return [
-        { icon: Users, label: 'Mis Clases', href: '/classes' },
+        { icon: Users, label: 'Mis Clases', action: () => console.log('Navigate to classes') },
         ...commonItems,
       ];
     }
@@ -67,7 +88,7 @@ const Dashboard = () => {
                   key={item.label}
                   variant="ghost"
                   className="w-full justify-start"
-                  onClick={() => console.log(`Navigate to ${item.href}`)}
+                  onClick={item.action}
                 >
                   <item.icon className="h-4 w-4 mr-3" />
                   {item.label}
