@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 interface LoginFormProps {
   onToggleMode: () => void;
@@ -18,6 +18,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const { t } = useLanguage();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

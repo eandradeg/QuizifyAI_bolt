@@ -46,21 +46,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { data: { session }, error } = await supabase.auth.getSession();
         if (error) {
           console.error('Error getting session:', error);
-          toast({
-            title: t('error'),
-            description: t('connectionError'),
-            variant: 'destructive',
-          });
         } else if (session?.user) {
           await fetchUserProfile(session.user);
         }
       } catch (error) {
         console.error('Error in getInitialSession:', error);
-        toast({
-          title: t('error'),
-          description: t('connectionError'),
-          variant: 'destructive',
-        });
       } finally {
         setIsLoading(false);
       }
@@ -73,7 +63,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Auth state changed:', event, session?.user?.email);
       
       if (session?.user) {
-        await fetchUserProfile(session.user);
+        // Add a small delay to ensure the trigger has completed
+        if (event === 'SIGNED_UP') {
+          setTimeout(() => {
+            fetchUserProfile(session.user);
+          }, 1000);
+        } else {
+          await fetchUserProfile(session.user);
+        }
       } else {
         setUser(null);
       }
@@ -83,7 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, [t]);
 
-  const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
+  const fetchUserProfile = async (supabaseUser: SupabaseUser, retries = 3) => {
     try {
       console.log('Fetching profile for user:', supabaseUser.id);
       const { data: profile, error } = await supabase
@@ -94,6 +91,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         console.error('Error fetching profile:', error);
+        
+        // If profile doesn't exist and we have retries left, wait and try again
+        if (error.code === 'PGRST116' && retries > 0) {
+          console.log(`Profile not found, retrying... (${retries} retries left)`);
+          setTimeout(() => {
+            fetchUserProfile(supabaseUser, retries - 1);
+          }, 1000);
+          return;
+        }
+        
         toast({
           title: t('error'),
           description: t('connectionError'),
@@ -114,11 +121,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
-      toast({
-        title: t('error'),
-        description: t('connectionError'),
-        variant: 'destructive',
-      });
+      if (retries > 0) {
+        setTimeout(() => {
+          fetchUserProfile(supabaseUser, retries - 1);
+        }, 1000);
+      }
     }
   };
 
