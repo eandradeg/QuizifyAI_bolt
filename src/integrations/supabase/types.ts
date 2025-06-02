@@ -9,80 +9,48 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      class_enrollments: {
-        Row: {
-          class_id: string
-          enrolled_at: string
-          id: string
-          student_id: string
-        }
-        Insert: {
-          class_id: string
-          enrolled_at?: string
-          id?: string
-          student_id: string
-        }
-        Update: {
-          class_id?: string
-          enrolled_at?: string
-          id?: string
-          student_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "class_enrollments_class_id_fkey"
-            columns: ["class_id"]
-            isOneToOne: false
-            referencedRelation: "classes"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "class_enrollments_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_enrollments_class"
-            columns: ["class_id"]
-            isOneToOne: false
-            referencedRelation: "classes"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_enrollments_student"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       classes: {
         Row: {
+          academic_year: string | null
           created_at: string
           description: string | null
+          end_date: string | null
+          grade_level: string | null
           id: string
           name: string
+          settings: Json | null
+          start_date: string | null
+          status: string
           subject: string
           teacher_id: string
           updated_at: string
         }
         Insert: {
+          academic_year?: string | null
           created_at?: string
           description?: string | null
+          end_date?: string | null
+          grade_level?: string | null
           id?: string
           name: string
+          settings?: Json | null
+          start_date?: string | null
+          status?: string
           subject: string
           teacher_id: string
           updated_at?: string
         }
         Update: {
+          academic_year?: string | null
           created_at?: string
           description?: string | null
+          end_date?: string | null
+          grade_level?: string | null
           id?: string
           name?: string
+          settings?: Json | null
+          start_date?: string | null
+          status?: string
           subject?: string
           teacher_id?: string
           updated_at?: string
@@ -95,13 +63,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_classes_teacher"
-            columns: ["teacher_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
       messages: {
@@ -109,39 +70,47 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          metadata: Json | null
+          parent_id: string | null
           read_at: string | null
           receiver_id: string
           sender_id: string
+          subject: string | null
+          type: string
+          updated_at: string
         }
         Insert: {
           content: string
           created_at?: string
           id?: string
+          metadata?: Json | null
+          parent_id?: string | null
           read_at?: string | null
           receiver_id: string
           sender_id: string
+          subject?: string | null
+          type?: string
+          updated_at?: string
         }
         Update: {
           content?: string
           created_at?: string
           id?: string
+          metadata?: Json | null
+          parent_id?: string | null
           read_at?: string | null
           receiver_id?: string
           sender_id?: string
+          subject?: string | null
+          type?: string
+          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "fk_messages_receiver"
-            columns: ["receiver_id"]
+            foreignKeyName: "messages_parent_id_fkey"
+            columns: ["parent_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_messages_sender"
-            columns: ["sender_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "messages"
             referencedColumns: ["id"]
           },
           {
@@ -160,40 +129,73 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          link: string | null
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       parent_students: {
         Row: {
           created_at: string
           id: string
+          is_primary: boolean | null
           parent_id: string
+          relationship: string
           student_id: string
         }
         Insert: {
           created_at?: string
           id?: string
+          is_primary?: boolean | null
           parent_id: string
+          relationship: string
           student_id: string
         }
         Update: {
           created_at?: string
           id?: string
+          is_primary?: boolean | null
           parent_id?: string
+          relationship?: string
           student_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_parent_students_parent"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_parent_students_student"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "parent_students_parent_id_fkey"
             columns: ["parent_id"]
@@ -217,7 +219,9 @@ export type Database = {
           display_name: string
           email: string
           id: string
+          last_active_at: string | null
           role: string
+          settings: Json | null
           updated_at: string
         }
         Insert: {
@@ -226,7 +230,9 @@ export type Database = {
           display_name: string
           email: string
           id: string
+          last_active_at?: string | null
           role: string
+          settings?: Json | null
           updated_at?: string
         }
         Update: {
@@ -235,7 +241,9 @@ export type Database = {
           display_name?: string
           email?: string
           id?: string
+          last_active_at?: string | null
           role?: string
+          settings?: Json | null
           updated_at?: string
         }
         Relationships: []
@@ -244,38 +252,46 @@ export type Database = {
         Row: {
           correct_answer: string
           created_at: string
+          difficulty: string | null
+          explanation: string | null
           id: string
           options: Json | null
+          points: number
           question_text: string
           question_type: string
           quiz_id: string
+          tags: string[] | null
+          updated_at: string
         }
         Insert: {
           correct_answer: string
           created_at?: string
+          difficulty?: string | null
+          explanation?: string | null
           id?: string
           options?: Json | null
+          points?: number
           question_text: string
           question_type: string
           quiz_id: string
+          tags?: string[] | null
+          updated_at?: string
         }
         Update: {
           correct_answer?: string
           created_at?: string
+          difficulty?: string | null
+          explanation?: string | null
           id?: string
           options?: Json | null
+          points?: number
           question_text?: string
           question_type?: string
           quiz_id?: string
+          tags?: string[] | null
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_questions_quiz"
-            columns: ["quiz_id"]
-            isOneToOne: false
-            referencedRelation: "quizzes"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "questions_quiz_id_fkey"
             columns: ["quiz_id"]
@@ -287,44 +303,45 @@ export type Database = {
       }
       quiz_attempts: {
         Row: {
-          completed_at: string
+          answers: Json
+          completed_at: string | null
           id: string
           max_score: number
+          metadata: Json | null
           quiz_id: string
           score: number
+          started_at: string
+          status: string
           student_id: string
+          time_spent: number | null
         }
         Insert: {
-          completed_at?: string
+          answers?: Json
+          completed_at?: string | null
           id?: string
           max_score: number
+          metadata?: Json | null
           quiz_id: string
           score: number
+          started_at?: string
+          status?: string
           student_id: string
+          time_spent?: number | null
         }
         Update: {
-          completed_at?: string
+          answers?: Json
+          completed_at?: string | null
           id?: string
           max_score?: number
+          metadata?: Json | null
           quiz_id?: string
           score?: number
+          started_at?: string
+          status?: string
           student_id?: string
+          time_spent?: number | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_attempts_quiz"
-            columns: ["quiz_id"]
-            isOneToOne: false
-            referencedRelation: "quizzes"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_attempts_student"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "quiz_attempts_quiz_id_fkey"
             columns: ["quiz_id"]
@@ -347,46 +364,53 @@ export type Database = {
           created_at: string
           creator_id: string
           description: string | null
+          difficulty: string | null
           id: string
           is_published: boolean
+          passing_score: number | null
+          settings: Json | null
+          time_limit: number | null
           title: string
+          type: string
           updated_at: string
+          valid_from: string | null
+          valid_until: string | null
         }
         Insert: {
           class_id?: string | null
           created_at?: string
           creator_id: string
           description?: string | null
+          difficulty?: string | null
           id?: string
           is_published?: boolean
+          passing_score?: number | null
+          settings?: Json | null
+          time_limit?: number | null
           title: string
+          type?: string
           updated_at?: string
+          valid_from?: string | null
+          valid_until?: string | null
         }
         Update: {
           class_id?: string | null
           created_at?: string
           creator_id?: string
           description?: string | null
+          difficulty?: string | null
           id?: string
           is_published?: boolean
+          passing_score?: number | null
+          settings?: Json | null
+          time_limit?: number | null
           title?: string
+          type?: string
           updated_at?: string
+          valid_from?: string | null
+          valid_until?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_quizzes_class"
-            columns: ["class_id"]
-            isOneToOne: false
-            referencedRelation: "classes"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_quizzes_creator"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "quizzes_class_id_fkey"
             columns: ["class_id"]
@@ -405,48 +429,53 @@ export type Database = {
       }
       task_submissions: {
         Row: {
+          attachments: Json | null
           content: string
           feedback: string | null
-          grade: string | null
+          grade: number | null
           id: string
+          review_data: Json | null
           reviewed_at: string | null
+          reviewer_id: string | null
+          status: string
           student_id: string
           submitted_at: string
           task_id: string
         }
         Insert: {
+          attachments?: Json | null
           content: string
           feedback?: string | null
-          grade?: string | null
+          grade?: number | null
           id?: string
+          review_data?: Json | null
           reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
           student_id: string
           submitted_at?: string
           task_id: string
         }
         Update: {
+          attachments?: Json | null
           content?: string
           feedback?: string | null
-          grade?: string | null
+          grade?: number | null
           id?: string
+          review_data?: Json | null
           reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
           student_id?: string
           submitted_at?: string
           task_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "fk_submissions_student"
-            columns: ["student_id"]
+            foreignKeyName: "task_submissions_reviewer_id_fkey"
+            columns: ["reviewer_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_submissions_task"
-            columns: ["task_id"]
-            isOneToOne: false
-            referencedRelation: "tasks"
             referencedColumns: ["id"]
           },
           {
@@ -473,7 +502,12 @@ export type Database = {
           description: string | null
           due_date: string | null
           id: string
+          points_possible: number | null
+          rubric: Json | null
+          settings: Json | null
+          status: string
           title: string
+          type: string
           updated_at: string
         }
         Insert: {
@@ -483,7 +517,12 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: string
+          points_possible?: number | null
+          rubric?: Json | null
+          settings?: Json | null
+          status?: string
           title: string
+          type?: string
           updated_at?: string
         }
         Update: {
@@ -493,24 +532,15 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: string
+          points_possible?: number | null
+          rubric?: Json | null
+          settings?: Json | null
+          status?: string
           title?: string
+          type?: string
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_tasks_class"
-            columns: ["class_id"]
-            isOneToOne: false
-            referencedRelation: "classes"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_tasks_creator"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "tasks_class_id_fkey"
             columns: ["class_id"]
@@ -527,12 +557,81 @@ export type Database = {
           },
         ]
       }
+      user_activity: {
+        Row: {
+          activity_type: string
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_activity_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      gtrgm_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: { "": unknown }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      set_limit: {
+        Args: { "": number }
+        Returns: number
+      }
+      show_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      show_trgm: {
+        Args: { "": string }
+        Returns: string[]
+      }
     }
     Enums: {
       [_ in never]: never
