@@ -92,10 +92,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .from('profiles')
         .select('*')
         .eq('id', supabaseUser.id)
-        .maybeSingle();
+        .single();
 
       if (error) {
         console.error('Error fetching profile:', error);
+        
+        // If profile doesn't exist and we have retries left, wait and try again
+        if (error.code === 'PGRST116' && retries > 0) {
+          console.log(`Profile not found, retrying... (${retries} retries left)`);
+          setTimeout(() => {
+            fetchUserProfile(supabaseUser, retries - 1);
+          }, 1000);
+          return;
+        }
+        
         toast({
           title: t('error'),
           description: t('connectionError'),
@@ -104,31 +114,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
-      if (!profile) {
-        console.log(`Profile not found, retrying... (${retries} retries left)`);
-        if (retries > 0) {
-          setTimeout(() => {
-            fetchUserProfile(supabaseUser, retries - 1);
-          }, 1000);
-          return;
-        } else {
-          toast({
-            title: t('error'),
-            description: t('profileNotFound'),
-            variant: 'destructive',
-          });
-          return;
-        }
+      if (profile) {
+        console.log('Profile found:', profile);
+        setUser({
+          id: profile.id,
+          email: profile.email,
+          role: profile.role as UserRole,
+          name: profile.display_name,
+          avatar: profile.avatar_url || undefined,
+        });
       }
-
-      console.log('Profile found:', profile);
-      setUser({
-        id: profile.id,
-        email: profile.email,
-        role: profile.role as UserRole,
-        name: profile.display_name,
-        avatar: profile.avatar_url || undefined,
-      });
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
       if (retries > 0) {
