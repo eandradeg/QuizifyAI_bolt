@@ -1,39 +1,15 @@
 
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import LoginForm from '@/components/Auth/LoginForm';
 import RegisterForm from '@/components/Auth/RegisterForm';
 import Header from '@/components/Layout/Header';
+import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 
 const Index = () => {
-  const { user, isLoading } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
-  const navigate = useNavigate();
 
-  // Redirect authenticated users to dashboard
-  useEffect(() => {
-    if (user && !isLoading) {
-      console.log('User authenticated, redirecting to dashboard');
-      navigate('/dashboard');
-    }
-  }, [user, isLoading, navigate]);
-
-  console.log('Index render - user:', user, 'isLoading:', isLoading);
-
-  if (isLoading) {
-    console.log('Showing loading spinner');
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  // Show login/register forms for non-authenticated users
-  if (!user) {
-    console.log('User not authenticated, showing login/register forms');
-    return (
+  return (
+    <ProtectedRoute requireAuth={false}>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
         <Header />
         <div className="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
@@ -59,15 +35,7 @@ const Index = () => {
           </div>
         </div>
       </div>
-    );
-  }
-
-  // This should rarely be reached, but just in case
-  console.log('Unexpected state - user exists but not redirected yet');
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-    </div>
+    </ProtectedRoute>
   );
 };
 

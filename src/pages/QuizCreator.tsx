@@ -5,36 +5,33 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import QuizCreator from '@/components/Quiz/QuizCreator';
 import Header from '@/components/Layout/Header';
+import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 
 const QuizCreatorPage = () => {
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
+  // Redirect non-teachers to dashboard
   useEffect(() => {
-    if (!isLoading && !user) {
-      navigate('/');
+    if (user && user.role !== 'teacher') {
+      console.log('User is not a teacher, redirecting to dashboard');
+      navigate('/dashboard');
     }
-  }, [user, isLoading, navigate]);
+  }, [user, navigate]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
+  if (user && user.role !== 'teacher') {
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header />
-      <div className="py-8 px-6">
-        <QuizCreator />
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <Header />
+        <div className="py-8 px-6">
+          <QuizCreator />
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 };
 
