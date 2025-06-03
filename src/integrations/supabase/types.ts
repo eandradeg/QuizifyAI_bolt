@@ -9,6 +9,42 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      calendar_events: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string | null
+          event_type: string | null
+          id: string
+          is_completed: boolean | null
+          start_date: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          event_type?: string | null
+          id?: string
+          is_completed?: boolean | null
+          start_date: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          event_type?: string | null
+          id?: string
+          is_completed?: boolean | null
+          start_date?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       classes: {
         Row: {
           academic_year: string | null
@@ -64,6 +100,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      homework_reviews: {
+        Row: {
+          ai_feedback: Json | null
+          content: string
+          context_documents: string[] | null
+          created_at: string
+          grade: string | null
+          id: string
+          student_id: string
+          teacher_feedback: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          ai_feedback?: Json | null
+          content: string
+          context_documents?: string[] | null
+          created_at?: string
+          grade?: string | null
+          id?: string
+          student_id: string
+          teacher_feedback?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          ai_feedback?: Json | null
+          content?: string
+          context_documents?: string[] | null
+          created_at?: string
+          grade?: string | null
+          id?: string
+          student_id?: string
+          teacher_feedback?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       messages: {
         Row: {
@@ -169,6 +244,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      parent_student_relations: {
+        Row: {
+          created_at: string
+          id: string
+          parent_id: string
+          student_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          parent_id: string
+          student_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          parent_id?: string
+          student_id?: string
+        }
+        Relationships: []
       }
       parent_students: {
         Row: {
@@ -358,17 +454,58 @@ export type Database = {
           },
         ]
       }
+      quiz_results: {
+        Row: {
+          answers: Json
+          completed_at: string
+          id: string
+          quiz_id: string
+          score: number
+          total_questions: number
+          user_id: string
+        }
+        Insert: {
+          answers: Json
+          completed_at?: string
+          id?: string
+          quiz_id: string
+          score: number
+          total_questions: number
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          completed_at?: string
+          id?: string
+          quiz_id?: string
+          score?: number
+          total_questions?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_results_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quizzes: {
         Row: {
           class_id: string | null
+          content: Json
           created_at: string
           creator_id: string
           description: string | null
           difficulty: string | null
           id: string
           is_published: boolean
+          is_shared: boolean | null
           passing_score: number | null
           settings: Json | null
+          share_link: string | null
           time_limit: number | null
           title: string
           type: string
@@ -378,14 +515,17 @@ export type Database = {
         }
         Insert: {
           class_id?: string | null
+          content?: Json
           created_at?: string
           creator_id: string
           description?: string | null
           difficulty?: string | null
           id?: string
           is_published?: boolean
+          is_shared?: boolean | null
           passing_score?: number | null
           settings?: Json | null
+          share_link?: string | null
           time_limit?: number | null
           title: string
           type?: string
@@ -395,14 +535,17 @@ export type Database = {
         }
         Update: {
           class_id?: string | null
+          content?: Json
           created_at?: string
           creator_id?: string
           description?: string | null
           difficulty?: string | null
           id?: string
           is_published?: boolean
+          is_shared?: boolean | null
           passing_score?: number | null
           settings?: Json | null
+          share_link?: string | null
           time_limit?: number | null
           title?: string
           type?: string
