@@ -17,7 +17,10 @@ export const useAuthState = () => {
         if (error) {
           console.error('Error getting session:', error);
         } else if (session?.user) {
+          console.log('Initial session found for user:', session.user.email);
           await fetchUserProfile(session.user);
+        } else {
+          console.log('No initial session found');
         }
       } catch (error) {
         console.error('Error in getInitialSession:', error);
@@ -32,25 +35,26 @@ export const useAuthState = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session?.user?.email);
       
-      if (session?.user) {
-        // Add a small delay for new registrations to ensure the trigger has completed
-        if (event === 'SIGNED_IN') {
-          // Check if this is a new user by looking at the session metadata
-          const isNewUser = session.user.email_confirmed_at === session.user.created_at;
-          if (isNewUser) {
-            setTimeout(() => {
-              fetchUserProfile(session.user);
-            }, 1000);
-          } else {
-            await fetchUserProfile(session.user);
-          }
-        } else {
+      if (event === 'SIGNED_IN' && session?.user) {
+        console.log('User signed in:', session.user.email);
+        // For new Google users, add a longer delay to ensure the trigger has time to complete
+        const isGoogleUser = session.user.app_metadata?.provider === 'google';
+        const delay = isGoogleUser ? 3000 : 1000;
+        
+        setTimeout(async () => {
           await fetchUserProfile(session.user);
-        }
+        }, delay);
+      } else if (event === 'SIGNED_OUT') {
+        console.log('User signed out');
+        setUser(null);
+        setIsLoading(false);
+      } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+        console.log('Token refreshed for user:', session.user.email);
+        await fetchUserProfile(session.user);
       } else {
         setUser(null);
+        setIsLoading(false);
       }
-      setIsLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -58,11 +62,21 @@ export const useAuthState = () => {
 
   const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
     try {
+      setIsLoading(true);
+      console.log('Fetching user profile for:', supabaseUser.email);
       const userProfile = await authService.fetchUserProfile(supabaseUser);
-      setUser(userProfile);
+      if (userProfile) {
+        console.log('User profile loaded successfully:', userProfile.email);
+        setUser(userProfile);
+      } else {
+        console.log('No user profile found');
+        setUser(null);
+      }
     } catch (error) {
       console.error('Failed to fetch user profile:', error);
-      // Don't throw here to avoid breaking the auth flow
+      setUser(null);
+    } finally {
+      setIsLoading(false);
     }
   };
 

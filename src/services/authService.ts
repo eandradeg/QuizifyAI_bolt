@@ -26,6 +26,10 @@ export const authService = {
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/dashboard`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
       },
     });
 
@@ -48,6 +52,7 @@ export const authService = {
           display_name: name,
           role: role,
         },
+        emailRedirectTo: `${window.location.origin}/dashboard`,
       },
     });
 
@@ -85,7 +90,7 @@ export const authService = {
         // If profile doesn't exist and we have retries left, wait and try again
         if (error.code === 'PGRST116' && retries > 0) {
           console.log(`Profile not found, retrying... (${retries} retries left)`);
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 2000)); // Increased wait time
           return this.fetchUserProfile(supabaseUser, retries - 1);
         }
         
@@ -107,7 +112,7 @@ export const authService = {
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
       if (retries > 0) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Increased wait time
         return this.fetchUserProfile(supabaseUser, retries - 1);
       }
       throw error;

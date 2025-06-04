@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext } from 'react';
 import { authService } from '@/services/authService';
 import { useAuthState } from '@/hooks/useAuthState';
@@ -48,10 +49,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const loginWithGoogle = async () => {
-    setIsLoading(true);
     try {
+      console.log('Starting Google authentication process');
       await authService.signInWithGoogle();
       // Don't show success toast here as the user will be redirected
+      // Also don't set loading to false as the redirect will handle the state
     } catch (error: any) {
       console.error('Google login error:', error);
       toast({
@@ -59,9 +61,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         description: t('googleLoginError') || 'Error al iniciar sesión con Google',
         variant: 'destructive',
       });
-      throw error;
-    } finally {
       setIsLoading(false);
+      throw error;
     }
   };
 
