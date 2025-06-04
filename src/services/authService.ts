@@ -20,6 +20,24 @@ export const authService = {
     return data;
   },
 
+  async signInWithGoogle() {
+    console.log('Attempting Google sign-in');
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+
+    if (error) {
+      console.error('Google sign-in error:', error);
+      throw new Error(error.message);
+    }
+
+    console.log('Google sign-in initiated');
+    return data;
+  },
+
   async signUp(email: string, password: string, name: string, role: UserRole) {
     console.log('Attempting registration for:', email, 'with role:', role);
     const { data, error } = await supabase.auth.signUp({

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext } from 'react';
 import { authService } from '@/services/authService';
 import { useAuthState } from '@/hooks/useAuthState';
@@ -40,6 +39,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toast({
         title: t('error'),
         description: errorMessage,
+        variant: 'destructive',
+      });
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loginWithGoogle = async () => {
+    setIsLoading(true);
+    try {
+      await authService.signInWithGoogle();
+      // Don't show success toast here as the user will be redirected
+    } catch (error: any) {
+      console.error('Google login error:', error);
+      toast({
+        title: t('error'),
+        description: t('googleLoginError') || 'Error al iniciar sesión con Google',
         variant: 'destructive',
       });
       throw error;
@@ -95,7 +112,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, loginWithGoogle, register, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

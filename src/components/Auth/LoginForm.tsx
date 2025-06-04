@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
+import GoogleSignInButton from './GoogleSignInButton';
 
 interface LoginFormProps {
   onToggleMode: () => void;
@@ -60,7 +62,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
           {t('login')}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
+        <GoogleSignInButton disabled={isLoading} />
+        
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <Separator className="w-full" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              {t('orContinueWith') || 'O continúa con'}
+            </span>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">{t('email')}</Label>
@@ -93,6 +108,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             {isLoading ? t('loading') : t('login')}
           </Button>
         </form>
+        
         <div className="mt-4 text-center">
           <Button variant="link" onClick={onToggleMode} disabled={isLoading}>
             {t('noAccount')} {t('register')}
