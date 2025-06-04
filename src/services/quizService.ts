@@ -1,6 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type { Quiz, QuizResult } from '@/types/auth';
+import type { TablesUpdate } from '@/integrations/supabase/types';
 
 export const quizService = {
   async createQuiz(quiz: Omit<Quiz, 'id' | 'created_at' | 'updated_at' | 'creator_id'>) {
@@ -45,10 +46,18 @@ export const quizService = {
   },
 
   async updateQuiz(id: string, updates: Partial<Quiz>) {
-    // Create a copy of updates with proper type casting for content
-    const dbUpdates = { ...updates };
-    if (dbUpdates.content) {
-      (dbUpdates as any).content = dbUpdates.content as any;
+    // Transform Quiz updates to database table updates
+    const dbUpdates: TablesUpdate<'quizzes'> = {};
+    
+    // Copy over simple fields that match between types
+    if (updates.title !== undefined) dbUpdates.title = updates.title;
+    if (updates.description !== undefined) dbUpdates.description = updates.description;
+    if (updates.is_shared !== undefined) dbUpdates.is_shared = updates.is_shared;
+    if (updates.share_link !== undefined) dbUpdates.share_link = updates.share_link;
+    
+    // Handle content field with proper type conversion
+    if (updates.content !== undefined) {
+      dbUpdates.content = updates.content as any;
     }
 
     const { data, error } = await supabase
