@@ -12,7 +12,7 @@ export const quizService = {
       .insert({
         title: quiz.title,
         description: quiz.description,
-        content: quiz.content,
+        content: quiz.content as any, // Type cast to match database Json type
         creator_id: user.id,
         is_shared: quiz.is_shared || false,
       })
@@ -45,9 +45,15 @@ export const quizService = {
   },
 
   async updateQuiz(id: string, updates: Partial<Quiz>) {
+    // Create a copy of updates with proper type casting for content
+    const dbUpdates = { ...updates };
+    if (dbUpdates.content) {
+      (dbUpdates as any).content = dbUpdates.content as any;
+    }
+
     const { data, error } = await supabase
       .from('quizzes')
-      .update(updates)
+      .update(dbUpdates)
       .eq('id', id)
       .select()
       .single();
