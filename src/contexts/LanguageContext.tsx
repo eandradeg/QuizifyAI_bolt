@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Language = 'es' | 'en' | 'de';
@@ -63,6 +62,11 @@ const translations: Translations = {
   logoutError: { es: 'Error al cerrar sesión', en: 'Logout error', de: 'Abmeldefehler' },
   invalidCredentials: { es: 'Credenciales inválidas', en: 'Invalid credentials', de: 'Ungültige Anmeldeinformationen' },
   userAlreadyExists: { es: 'El usuario ya existe', en: 'User already exists', de: 'Benutzer existiert bereits' },
+  
+  // Google Auth
+  continueWithGoogle: { es: 'Continuar con Google', en: 'Continue with Google', de: 'Mit Google fortfahren' },
+  googleLoginError: { es: 'Error al iniciar sesión con Google', en: 'Error signing in with Google', de: 'Fehler bei der Anmeldung mit Google' },
+  orContinueWith: { es: 'O continúa con', en: 'Or continue with', de: 'Oder fortfahren mit' },
   
   // Toast messages - General
   loading: { es: 'Cargando...', en: 'Loading...', de: 'Laden...' },
