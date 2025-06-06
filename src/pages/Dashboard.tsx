@@ -9,7 +9,7 @@ import TeacherDashboard from '@/components/Dashboard/TeacherDashboard';
 import StudentDashboard from '@/components/Dashboard/StudentDashboard';
 import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Users, MessageSquare, Settings } from 'lucide-react';
+import { BookOpen, Users, MessageSquare, Settings, School, Calendar } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -33,6 +33,7 @@ const Dashboard = () => {
     const commonItems = [
       { icon: BookOpen, label: t('quizzes'), action: () => navigate('/quiz') },
       { icon: MessageSquare, label: t('messages'), action: () => navigate('/messages') },
+      { icon: Calendar, label: 'Calendario', action: () => navigate('/calendar') },
       { icon: Settings, label: t('settings'), action: () => navigate('/settings') },
     ];
 
@@ -45,12 +46,16 @@ const Dashboard = () => {
 
     if (user?.role === 'teacher') {
       return [
+        { icon: School, label: 'Google Classroom', action: () => navigate('/classroom') },
         { icon: Users, label: 'Mis Clases', action: () => navigate('/classes') },
         ...commonItems,
       ];
     }
 
-    return commonItems;
+    return [
+      { icon: Users, label: 'Mis Clases', action: () => navigate('/classes') },
+      ...commonItems,
+    ];
   };
 
   return (

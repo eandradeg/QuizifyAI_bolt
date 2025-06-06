@@ -2,14 +2,96 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Users, TrendingUp, BookOpen, MessageSquare } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { 
+  Users, 
+  TrendingUp, 
+  BookOpen, 
+  MessageSquare, 
+  GraduationCap, 
+  Calendar,
+  School,
+  ClipboardList,
+  Bell
+} from 'lucide-react';
 
 const ParentDashboard = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
+
+  // Mock data para los hijos
+  const children = [
+    {
+      id: '1',
+      name: 'María Rodríguez',
+      grade: '8º Grado',
+      school: 'Colegio San José',
+      avatar: null,
+      progress: 92,
+      classes: ['Matemáticas', 'Historia', 'Ciencias'],
+      recentActivity: 'Completó Quiz de Matemáticas',
+      nextClass: 'Historia - Mañana 09:00'
+    },
+    {
+      id: '2',
+      name: 'Carlos Rodríguez',
+      grade: '6º Grado',
+      school: 'Colegio San José',
+      avatar: null,
+      progress: 78,
+      classes: ['Matemáticas', 'Ciencias Naturales', 'Lengua'],
+      recentActivity: 'Entregó tarea de Ciencias',
+      nextClass: 'Matemáticas - Hoy 14:00'
+    }
+  ];
 
   return (
     <div className="space-y-6">
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <Button 
+          className="h-20 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+          onClick={() => navigate('/messages')}
+        >
+          <div className="flex flex-col items-center">
+            <MessageSquare className="h-6 w-6 mb-2" />
+            <span>Mensajes</span>
+          </div>
+        </Button>
+        <Button 
+          variant="outline" 
+          className="h-20"
+          onClick={() => navigate('/quiz')}
+        >
+          <div className="flex flex-col items-center">
+            <BookOpen className="h-6 w-6 mb-2" />
+            <span>Ver Quizzes</span>
+          </div>
+        </Button>
+        <Button 
+          variant="outline" 
+          className="h-20"
+        >
+          <div className="flex flex-col items-center">
+            <Calendar className="h-6 w-6 mb-2" />
+            <span>Calendario</span>
+          </div>
+        </Button>
+        <Button 
+          variant="outline" 
+          className="h-20"
+        >
+          <div className="flex flex-col items-center">
+            <ClipboardList className="h-6 w-6 mb-2" />
+            <span>Tareas</span>
+          </div>
+        </Button>
+      </div>
+
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -17,7 +99,7 @@ const ParentDashboard = () => {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
+            <div className="text-2xl font-bold">{children.length}</div>
             <p className="text-xs text-muted-foreground">Estudiantes activos</p>
           </CardContent>
         </Card>
@@ -46,43 +128,107 @@ const ParentDashboard = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('messages')}</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Notificaciones</CardTitle>
+            <Bell className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">5</div>
-            <p className="text-xs text-muted-foreground">No leídos</p>
+            <p className="text-xs text-muted-foreground">Sin leer</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Progreso de Hijos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="font-medium">María</span>
-                <span className="text-green-600">92%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-green-600 h-2 rounded-full" style={{ width: '92%' }}></div>
-              </div>
-            </div>
-            <div className="space-y-4 mt-4">
-              <div className="flex items-center justify-between">
-                <span className="font-medium">Carlos</span>
-                <span className="text-blue-600">78%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-blue-600 h-2 rounded-full" style={{ width: '78%' }}></div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Children Information */}
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            Información de mis Hijos
+          </h2>
+          <Button variant="outline" size="sm">
+            <Users className="h-4 w-4 mr-2" />
+            Gestionar Hijos
+          </Button>
+        </div>
 
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {children.map((child) => (
+            <Card key={child.id} className="hover:shadow-md transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-center space-x-4">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={child.avatar || ""} />
+                    <AvatarFallback>
+                      {child.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <CardTitle className="text-lg">{child.name}</CardTitle>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {child.grade} • {child.school}
+                    </p>
+                  </div>
+                  <Badge variant="secondary">
+                    {child.progress}% progreso
+                  </Badge>
+                </div>
+              </CardHeader>
+              
+              <CardContent className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">Progreso General</span>
+                    <span className="text-sm text-gray-500">{child.progress}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all"
+                      style={{ width: `${child.progress}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-medium mb-2">Materias</h4>
+                  <div className="flex flex-wrap gap-1">
+                    {child.classes.map((className, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {className}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="border-t pt-3">
+                  <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    <ClipboardList className="h-3 w-3" />
+                    <span>Actividad reciente:</span>
+                  </div>
+                  <p className="text-sm">{child.recentActivity}</p>
+                </div>
+
+                <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                  <Calendar className="h-3 w-3" />
+                  <span>Próxima clase: {child.nextClass}</span>
+                </div>
+
+                <div className="flex space-x-2 pt-2">
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <MessageSquare className="h-3 w-3 mr-1" />
+                    Contactar
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <BookOpen className="h-3 w-3 mr-1" />
+                    Ver Notas
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent Activity Summary */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Actividades Recientes</CardTitle>
@@ -91,7 +237,7 @@ const ParentDashboard = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm">María completó Quiz de Matemáticas</span>
+                <span className="text-sm">María completó Quiz de Matemáticas - 95%</span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
@@ -100,6 +246,41 @@ const ParentDashboard = () => {
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                 <span className="text-sm">Nueva tarea asignada por Prof. González</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                <span className="text-sm">Reunión programada para el viernes</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Próximas Fechas Importantes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-2 border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 rounded">
+                <div>
+                  <p className="text-sm font-medium">Examen de Matemáticas</p>
+                  <p className="text-xs text-gray-500">María - Viernes 15/01</p>
+                </div>
+                <Badge variant="destructive" className="text-xs">Examen</Badge>
+              </div>
+              <div className="flex items-center justify-between p-2 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 rounded">
+                <div>
+                  <p className="text-sm font-medium">Entrega Proyecto</p>
+                  <p className="text-xs text-gray-500">Carlos - Lunes 18/01</p>
+                </div>
+                <Badge variant="outline" className="text-xs">Proyecto</Badge>
+              </div>
+              <div className="flex items-center justify-between p-2 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 rounded">
+                <div>
+                  <p className="text-sm font-medium">Reunión de Padres</p>
+                  <p className="text-xs text-gray-500">Colegio - Miércoles 20/01</p>
+                </div>
+                <Badge variant="secondary" className="text-xs">Reunión</Badge>
               </div>
             </div>
           </CardContent>
