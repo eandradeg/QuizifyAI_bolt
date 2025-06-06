@@ -3,13 +3,47 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { BookOpen, Users, TrendingUp, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { BookOpen, Users, TrendingUp, Plus, School } from 'lucide-react';
 
 const TeacherDashboard = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   return (
     <div className="space-y-6">
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <Button 
+          className="h-20 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+          onClick={() => navigate('/classroom')}
+        >
+          <div className="flex flex-col items-center">
+            <School className="h-6 w-6 mb-2" />
+            <span>Google Classroom</span>
+          </div>
+        </Button>
+        <Button 
+          variant="outline" 
+          className="h-20"
+          onClick={() => navigate('/quiz-creator')}
+        >
+          <div className="flex flex-col items-center">
+            <Plus className="h-6 w-6 mb-2" />
+            <span>Crear Quiz</span>
+          </div>
+        </Button>
+        <Button 
+          variant="outline" 
+          className="h-20"
+        >
+          <div className="flex flex-col items-center">
+            <BookOpen className="h-6 w-6 mb-2" />
+            <span>Nueva Tarea</span>
+          </div>
+        </Button>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
