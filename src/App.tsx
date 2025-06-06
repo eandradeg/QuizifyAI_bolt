@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Quiz from "./pages/Quiz";
 import QuizCreator from "./pages/QuizCreator";
 import Classroom from "./pages/Classroom";
+import Calendar from "./pages/Calendar";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
                 <Route path="/quiz-creator" element={<QuizCreator />} />
                 <Route path="/quiz/:id" element={<Quiz />} />
                 <Route path="/classroom" element={<Classroom />} />
+                <Route path="/calendar" element={<Calendar />} />
                 <Route path="/homework-review" element={<Dashboard />} />
                 <Route path="/settings" element={<Dashboard />} />
                 <Route path="/messages" element={<Dashboard />} />

@@ -54,3 +54,25 @@ export const useUpdateEvent = () => {
     },
   });
 };
+
+export const useDeleteEvent = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: calendarService.deleteEvent,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['calendar-events'] });
+      toast({
+        title: 'Success',
+        description: 'Event deleted successfully',
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+};
