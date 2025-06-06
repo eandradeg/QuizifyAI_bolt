@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,7 @@ import {
   Settings,
   Mail,
   MoreVertical,
-  Assignment
+  ClipboardList
 } from 'lucide-react';
 
 interface ClassroomDetailsProps {
@@ -121,7 +120,7 @@ const ClassroomDetails: React.FC<ClassroomDetailsProps> = ({ classId }) => {
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base flex items-center">
-                    <Assignment className="h-4 w-4 mr-2" />
+                    <ClipboardList className="h-4 w-4 mr-2" />
                     Tareas Recientes
                   </CardTitle>
                 </CardHeader>
