@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useCalendarEvents, useCreateEvent, useUpdateEvent } from '@/hooks/useCalendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -51,6 +50,7 @@ const CalendarView = () => {
       event_type: data.event_type,
       start_date: data.start_date.toISOString(),
       end_date: data.end_date?.toISOString(),
+      is_completed: false,
     }, {
       onSuccess: () => {
         setIsCreateDialogOpen(false);
