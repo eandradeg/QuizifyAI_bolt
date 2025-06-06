@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, Users, TrendingUp, Plus, School, GraduationCap } from 'lucide-react';
+import { BookOpen, Users, TrendingUp, Plus, School, GraduationCap, ClipboardCheck } from 'lucide-react';
 
 const TeacherDashboard = () => {
   const { t } = useLanguage();
@@ -13,7 +13,7 @@ const TeacherDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <Button 
           className="h-20 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
           onClick={() => navigate('/classroom')}
@@ -21,6 +21,15 @@ const TeacherDashboard = () => {
           <div className="flex flex-col items-center">
             <School className="h-6 w-6 mb-2" />
             <span>Google Classroom</span>
+          </div>
+        </Button>
+        <Button 
+          className="h-20 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+          onClick={() => navigate('/homework-review')}
+        >
+          <div className="flex flex-col items-center">
+            <ClipboardCheck className="h-6 w-6 mb-2" />
+            <span>Revisar Tareas</span>
           </div>
         </Button>
         <Button 
@@ -80,12 +89,12 @@ const TeacherDashboard = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Quizzes Creados</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Tareas Pendientes</CardTitle>
+            <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">47</div>
-            <p className="text-xs text-muted-foreground">Este semestre</p>
+            <div className="text-2xl font-bold">12</div>
+            <p className="text-xs text-muted-foreground">Por revisar</p>
           </CardContent>
         </Card>
 
@@ -140,27 +149,34 @@ const TeacherDashboard = () => {
 
         <Card>
           <CardHeader className="flex items-center justify-between">
-            <CardTitle>Quizzes Recientes</CardTitle>
-            <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600">
-              <Plus className="h-4 w-4 mr-2" />
-              {t('createQuiz')}
+            <CardTitle>Tareas Recientes</CardTitle>
+            <Button size="sm" className="bg-gradient-to-r from-green-600 to-blue-600" onClick={() => navigate('/homework-review')}>
+              <ClipboardCheck className="h-4 w-4 mr-2" />
+              Ver Todas
             </Button>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
-                  <p className="font-medium">Revolución Francesa</p>
-                  <p className="text-sm text-gray-500">Historia - 15 preguntas</p>
+                  <p className="font-medium">Ensayo Revolución Francesa</p>
+                  <p className="text-sm text-gray-500">Historia - 5 pendientes</p>
                 </div>
-                <span className="text-sm text-green-600">Active</span>
+                <span className="text-sm text-orange-600">Revisar</span>
               </div>
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
-                  <p className="font-medium">Ecuaciones Cuadráticas</p>
-                  <p className="text-sm text-gray-500">Matemáticas - 12 preguntas</p>
+                  <p className="font-medium">Ejercicios Álgebra</p>
+                  <p className="text-sm text-gray-500">Matemáticas - 3 pendientes</p>
                 </div>
-                <span className="text-sm text-blue-600">Draft</span>
+                <span className="text-sm text-orange-600">Revisar</span>
+              </div>
+              <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div>
+                  <p className="font-medium">Laboratorio Química</p>
+                  <p className="text-sm text-gray-500">Ciencias - Calificadas</p>
+                </div>
+                <span className="text-sm text-green-600">Completo</span>
               </div>
             </div>
           </CardContent>

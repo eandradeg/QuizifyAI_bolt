@@ -7,16 +7,22 @@ import Header from '@/components/Layout/Header';
 import ParentDashboard from '@/components/Dashboard/ParentDashboard';
 import TeacherDashboard from '@/components/Dashboard/TeacherDashboard';
 import StudentDashboard from '@/components/Dashboard/StudentDashboard';
+import HomeworkReview from '@/components/Homework/HomeworkReview';
 import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Users, MessageSquare, Settings, School, Calendar } from 'lucide-react';
+import { BookOpen, Users, MessageSquare, Settings, School, Calendar, ClipboardCheck } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [currentView, setCurrentView] = React.useState('dashboard');
 
   const renderDashboard = () => {
+    if (currentView === 'homework') {
+      return <HomeworkReview />;
+    }
+
     switch (user?.role) {
       case 'parent':
         return <ParentDashboard />;
@@ -40,6 +46,7 @@ const Dashboard = () => {
     if (user?.role === 'parent') {
       return [
         { icon: Users, label: 'Mis Hijos', action: () => navigate('/students') },
+        { icon: ClipboardCheck, label: 'Revisión de Tareas', action: () => setCurrentView('homework') },
         ...commonItems,
       ];
     }
@@ -48,12 +55,14 @@ const Dashboard = () => {
       return [
         { icon: School, label: 'Google Classroom', action: () => navigate('/classroom') },
         { icon: Users, label: 'Mis Clases', action: () => navigate('/classes') },
+        { icon: ClipboardCheck, label: 'Revisión de Tareas', action: () => setCurrentView('homework') },
         ...commonItems,
       ];
     }
 
     return [
       { icon: Users, label: 'Mis Clases', action: () => navigate('/classes') },
+      { icon: ClipboardCheck, label: 'Mis Tareas', action: () => setCurrentView('homework') },
       ...commonItems,
     ];
   };
@@ -71,10 +80,18 @@ const Dashboard = () => {
                 {t('dashboard')}
               </h2>
               <nav className="space-y-2">
+                <Button
+                  variant={currentView === 'dashboard' ? 'default' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => setCurrentView('dashboard')}
+                >
+                  <BookOpen className="h-4 w-4 mr-3" />
+                  Dashboard
+                </Button>
                 {getNavItems().map((item) => (
                   <Button
                     key={item.label}
-                    variant="ghost"
+                    variant={currentView === 'homework' && item.label.includes('Tareas') ? 'default' : 'ghost'}
                     className="w-full justify-start"
                     onClick={item.action}
                   >

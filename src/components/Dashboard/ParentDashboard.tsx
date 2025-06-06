@@ -15,7 +15,8 @@ import {
   Calendar,
   School,
   ClipboardList,
-  Bell
+  Bell,
+  ClipboardCheck
 } from 'lucide-react';
 
 const ParentDashboard = () => {
@@ -33,7 +34,9 @@ const ParentDashboard = () => {
       progress: 92,
       classes: ['Matemáticas', 'Historia', 'Ciencias'],
       recentActivity: 'Completó Quiz de Matemáticas',
-      nextClass: 'Historia - Mañana 09:00'
+      nextClass: 'Historia - Mañana 09:00',
+      pendingHomework: 2,
+      gradedHomework: 8
     },
     {
       id: '2',
@@ -44,7 +47,9 @@ const ParentDashboard = () => {
       progress: 78,
       classes: ['Matemáticas', 'Ciencias Naturales', 'Lengua'],
       recentActivity: 'Entregó tarea de Ciencias',
-      nextClass: 'Matemáticas - Hoy 14:00'
+      nextClass: 'Matemáticas - Hoy 14:00',
+      pendingHomework: 1,
+      gradedHomework: 5
     }
   ];
 
@@ -54,6 +59,15 @@ const ParentDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <Button 
           className="h-20 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+          onClick={() => navigate('/homework-review')}
+        >
+          <div className="flex flex-col items-center">
+            <ClipboardCheck className="h-6 w-6 mb-2" />
+            <span>Revisar Tareas</span>
+          </div>
+        </Button>
+        <Button 
+          className="h-20 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
           onClick={() => navigate('/messages')}
         >
           <div className="flex flex-col items-center">
@@ -80,15 +94,6 @@ const ParentDashboard = () => {
             <span>Calendario</span>
           </div>
         </Button>
-        <Button 
-          variant="outline" 
-          className="h-20"
-        >
-          <div className="flex flex-col items-center">
-            <ClipboardList className="h-6 w-6 mb-2" />
-            <span>Tareas</span>
-          </div>
-        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -106,23 +111,25 @@ const ParentDashboard = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Tareas Pendientes</CardTitle>
+            <ClipboardList className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {children.reduce((acc, child) => acc + child.pendingHomework, 0)}
+            </div>
+            <p className="text-xs text-muted-foreground">Por entregar</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{t('progress')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">85%</div>
             <p className="text-xs text-muted-foreground">Promedio general</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Quizzes Completados</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">24</div>
-            <p className="text-xs text-muted-foreground">Esta semana</p>
           </CardContent>
         </Card>
 
@@ -187,6 +194,17 @@ const ParentDashboard = () => {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-2 bg-orange-50 dark:bg-orange-900/20 rounded">
+                    <p className="text-lg font-bold text-orange-600">{child.pendingHomework}</p>
+                    <p className="text-xs text-orange-600">Tareas Pendientes</p>
+                  </div>
+                  <div className="text-center p-2 bg-green-50 dark:bg-green-900/20 rounded">
+                    <p className="text-lg font-bold text-green-600">{child.gradedHomework}</p>
+                    <p className="text-xs text-green-600">Tareas Calificadas</p>
+                  </div>
+                </div>
+
                 <div>
                   <h4 className="text-sm font-medium mb-2">Materias</h4>
                   <div className="flex flex-wrap gap-1">
@@ -212,13 +230,13 @@ const ParentDashboard = () => {
                 </div>
 
                 <div className="flex space-x-2 pt-2">
+                  <Button size="sm" variant="outline" className="flex-1" onClick={() => navigate('/homework-review')}>
+                    <ClipboardCheck className="h-3 w-3 mr-1" />
+                    Ver Tareas
+                  </Button>
                   <Button size="sm" variant="outline" className="flex-1">
                     <MessageSquare className="h-3 w-3 mr-1" />
                     Contactar
-                  </Button>
-                  <Button size="sm" variant="outline" className="flex-1">
-                    <BookOpen className="h-3 w-3 mr-1" />
-                    Ver Notas
                   </Button>
                 </div>
               </CardContent>
@@ -237,7 +255,7 @@ const ParentDashboard = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm">María completó Quiz de Matemáticas - 95%</span>
+                <span className="text-sm">María completó tarea de Matemáticas - 95%</span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
@@ -249,7 +267,7 @@ const ParentDashboard = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                <span className="text-sm">Reunión programada para el viernes</span>
+                <span className="text-sm">Comentario del profesor en Ciencias</span>
               </div>
             </div>
           </CardContent>
@@ -263,10 +281,10 @@ const ParentDashboard = () => {
             <div className="space-y-3">
               <div className="flex items-center justify-between p-2 border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 rounded">
                 <div>
-                  <p className="text-sm font-medium">Examen de Matemáticas</p>
+                  <p className="text-sm font-medium">Tarea de Matemáticas</p>
                   <p className="text-xs text-gray-500">María - Viernes 15/01</p>
                 </div>
-                <Badge variant="destructive" className="text-xs">Examen</Badge>
+                <Badge variant="destructive" className="text-xs">Urgente</Badge>
               </div>
               <div className="flex items-center justify-between p-2 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 rounded">
                 <div>
