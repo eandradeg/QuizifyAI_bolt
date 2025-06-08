@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,13 +17,15 @@ import {
   School,
   ClipboardList,
   Bell,
-  ClipboardCheck
+  ClipboardCheck,
+  UserCog
 } from 'lucide-react';
 import ParentGoogleClassroomDashboard from '@/components/GoogleClassroom/ParentGoogleClassroomDashboard';
 
 const ParentDashboard = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [activeView, setActiveView] = React.useState('overview');
 
   // Mock data para los hijos (mantenemos para la pestaña de resumen)
   const children = [
@@ -53,6 +56,10 @@ const ParentDashboard = () => {
       gradedHomework: 5
     }
   ];
+
+  const handleManageChildren = () => {
+    navigate('/parent-student-manager');
+  };
 
   return (
     <div className="space-y-6">
@@ -89,16 +96,17 @@ const ParentDashboard = () => {
         <Button 
           variant="outline" 
           className="h-20"
+          onClick={handleManageChildren}
         >
           <div className="flex flex-col items-center">
-            <Calendar className="h-6 w-6 mb-2" />
-            <span>Calendario</span>
+            <UserCog className="h-6 w-6 mb-2" />
+            <span>Gestionar Hijos</span>
           </div>
         </Button>
       </div>
 
       {/* Pestañas principales */}
-      <Tabs defaultValue="overview" className="space-y-6">
+      <Tabs value={activeView} onValueChange={setActiveView} className="space-y-6">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="overview">Resumen General</TabsTrigger>
           <TabsTrigger value="classroom">Google Classroom</TabsTrigger>
@@ -160,8 +168,8 @@ const ParentDashboard = () => {
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                 Información de mis Hijos
               </h2>
-              <Button variant="outline" size="sm">
-                <Users className="h-4 w-4 mr-2" />
+              <Button variant="outline" size="sm" onClick={handleManageChildren}>
+                <UserCog className="h-4 w-4 mr-2" />
                 Gestionar Hijos
               </Button>
             </div>

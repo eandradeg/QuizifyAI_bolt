@@ -4,50 +4,44 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Quiz from "./pages/Quiz";
 import QuizCreator from "./pages/QuizCreator";
 import Classroom from "./pages/Classroom";
 import Calendar from "./pages/Calendar";
+import ParentStudentManagerPage from "./pages/ParentStudentManager";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <ThemeProvider>
-        <LanguageProvider>
-          <AuthProvider>
+    <ThemeProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/quiz" element={<Quiz />} />
                 <Route path="/quiz-creator" element={<QuizCreator />} />
-                <Route path="/quiz/:id" element={<Quiz />} />
                 <Route path="/classroom" element={<Classroom />} />
                 <Route path="/calendar" element={<Calendar />} />
-                <Route path="/homework-review" element={<Dashboard />} />
-                <Route path="/settings" element={<Dashboard />} />
-                <Route path="/messages" element={<Dashboard />} />
-                <Route path="/classes" element={<Dashboard />} />
-                <Route path="/students" element={<Dashboard />} />
-                <Route path="/profile" element={<Dashboard />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="/parent-student-manager" element={<ParentStudentManagerPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
-          </AuthProvider>
-        </LanguageProvider>
-      </ThemeProvider>
-    </TooltipProvider>
+          </TooltipProvider>
+        </AuthProvider>
+      </LanguageProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
