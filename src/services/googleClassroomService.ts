@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 
 export interface GoogleClassroomToken {
   id: string;
@@ -41,7 +42,7 @@ export interface GoogleClassroomCoursework {
   course_id: string;
   title: string;
   description?: string;
-  materials?: any[];
+  materials?: Json;
   state?: string;
   alternate_link?: string;
   creation_time?: string;
@@ -52,8 +53,8 @@ export interface GoogleClassroomCoursework {
   max_points?: number;
   work_type?: string;
   submission_modification_mode?: string;
-  assignment_submission?: any;
-  multiple_choice_question?: any;
+  assignment_submission?: Json;
+  multiple_choice_question?: Json;
   synced_at?: string;
   created_at: string;
   updated_at: string;
@@ -72,10 +73,10 @@ export interface GoogleClassroomSubmission {
   alternate_link?: string;
   course_work_type?: string;
   associated_with_developer?: boolean;
-  submission_history?: any[];
-  assignment_submission?: any;
-  short_answer_submission?: any;
-  multiple_choice_submission?: any;
+  submission_history?: Json;
+  assignment_submission?: Json;
+  short_answer_submission?: Json;
+  multiple_choice_submission?: Json;
   synced_at?: string;
   created_at: string;
   updated_at: string;
@@ -227,7 +228,7 @@ export const googleClassroomService = {
       .order('due_date');
 
     if (error) throw new Error(error.message);
-    return data || [];
+    return (data || []) as GoogleClassroomCourseworkWithCourse[];
   },
 
   // Submission management
@@ -259,7 +260,7 @@ export const googleClassroomService = {
       .order('update_time', { nullsFirst: false });
 
     if (error) throw new Error(error.message);
-    return data || [];
+    return (data || []) as GoogleClassroomSubmissionWithDetails[];
   },
 
   // Sync logging
