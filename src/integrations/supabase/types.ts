@@ -101,6 +101,265 @@ export type Database = {
           },
         ]
       }
+      google_classroom_courses: {
+        Row: {
+          alternate_link: string | null
+          calendar_id: string | null
+          course_group_email: string | null
+          course_state: string | null
+          created_at: string | null
+          creation_time: string | null
+          description: string | null
+          description_heading: string | null
+          enrollment_code: string | null
+          guardians_enabled: boolean | null
+          id: string
+          name: string
+          owner_id: string
+          room: string | null
+          section: string | null
+          student_id: string
+          synced_at: string | null
+          teacher_folder_id: string | null
+          teacher_folder_title: string | null
+          teacher_group_email: string | null
+          update_time: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          alternate_link?: string | null
+          calendar_id?: string | null
+          course_group_email?: string | null
+          course_state?: string | null
+          created_at?: string | null
+          creation_time?: string | null
+          description?: string | null
+          description_heading?: string | null
+          enrollment_code?: string | null
+          guardians_enabled?: boolean | null
+          id: string
+          name: string
+          owner_id: string
+          room?: string | null
+          section?: string | null
+          student_id: string
+          synced_at?: string | null
+          teacher_folder_id?: string | null
+          teacher_folder_title?: string | null
+          teacher_group_email?: string | null
+          update_time?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          alternate_link?: string | null
+          calendar_id?: string | null
+          course_group_email?: string | null
+          course_state?: string | null
+          created_at?: string | null
+          creation_time?: string | null
+          description?: string | null
+          description_heading?: string | null
+          enrollment_code?: string | null
+          guardians_enabled?: boolean | null
+          id?: string
+          name?: string
+          owner_id?: string
+          room?: string | null
+          section?: string | null
+          student_id?: string
+          synced_at?: string | null
+          teacher_folder_id?: string | null
+          teacher_folder_title?: string | null
+          teacher_group_email?: string | null
+          update_time?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      google_classroom_coursework: {
+        Row: {
+          alternate_link: string | null
+          assignment_submission: Json | null
+          course_id: string
+          created_at: string | null
+          creation_time: string | null
+          description: string | null
+          due_date: string | null
+          due_time: string | null
+          id: string
+          materials: Json | null
+          max_points: number | null
+          multiple_choice_question: Json | null
+          scheduled_time: string | null
+          state: string | null
+          submission_modification_mode: string | null
+          synced_at: string | null
+          title: string
+          update_time: string | null
+          updated_at: string | null
+          work_type: string | null
+        }
+        Insert: {
+          alternate_link?: string | null
+          assignment_submission?: Json | null
+          course_id: string
+          created_at?: string | null
+          creation_time?: string | null
+          description?: string | null
+          due_date?: string | null
+          due_time?: string | null
+          id: string
+          materials?: Json | null
+          max_points?: number | null
+          multiple_choice_question?: Json | null
+          scheduled_time?: string | null
+          state?: string | null
+          submission_modification_mode?: string | null
+          synced_at?: string | null
+          title: string
+          update_time?: string | null
+          updated_at?: string | null
+          work_type?: string | null
+        }
+        Update: {
+          alternate_link?: string | null
+          assignment_submission?: Json | null
+          course_id?: string
+          created_at?: string | null
+          creation_time?: string | null
+          description?: string | null
+          due_date?: string | null
+          due_time?: string | null
+          id?: string
+          materials?: Json | null
+          max_points?: number | null
+          multiple_choice_question?: Json | null
+          scheduled_time?: string | null
+          state?: string | null
+          submission_modification_mode?: string | null
+          synced_at?: string | null
+          title?: string
+          update_time?: string | null
+          updated_at?: string | null
+          work_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "google_classroom_coursework_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "google_classroom_courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      google_classroom_submissions: {
+        Row: {
+          alternate_link: string | null
+          assigned_grade: number | null
+          assignment_submission: Json | null
+          associated_with_developer: boolean | null
+          course_work_type: string | null
+          coursework_id: string
+          created_at: string | null
+          creation_time: string | null
+          draft_grade: number | null
+          id: string
+          late: boolean | null
+          multiple_choice_submission: Json | null
+          short_answer_submission: Json | null
+          state: string | null
+          student_id: string
+          submission_history: Json | null
+          synced_at: string | null
+          update_time: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          alternate_link?: string | null
+          assigned_grade?: number | null
+          assignment_submission?: Json | null
+          associated_with_developer?: boolean | null
+          course_work_type?: string | null
+          coursework_id: string
+          created_at?: string | null
+          creation_time?: string | null
+          draft_grade?: number | null
+          id: string
+          late?: boolean | null
+          multiple_choice_submission?: Json | null
+          short_answer_submission?: Json | null
+          state?: string | null
+          student_id: string
+          submission_history?: Json | null
+          synced_at?: string | null
+          update_time?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          alternate_link?: string | null
+          assigned_grade?: number | null
+          assignment_submission?: Json | null
+          associated_with_developer?: boolean | null
+          course_work_type?: string | null
+          coursework_id?: string
+          created_at?: string | null
+          creation_time?: string | null
+          draft_grade?: number | null
+          id?: string
+          late?: boolean | null
+          multiple_choice_submission?: Json | null
+          short_answer_submission?: Json | null
+          state?: string | null
+          student_id?: string
+          submission_history?: Json | null
+          synced_at?: string | null
+          update_time?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "google_classroom_submissions_coursework_id_fkey"
+            columns: ["coursework_id"]
+            isOneToOne: false
+            referencedRelation: "google_classroom_coursework"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      google_classroom_tokens: {
+        Row: {
+          access_token: string
+          created_at: string | null
+          expires_at: string
+          id: string
+          refresh_token: string | null
+          scope: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          refresh_token?: string | null
+          scope?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          refresh_token?: string | null
+          scope?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       homework_reviews: {
         Row: {
           ai_feedback: Json | null
@@ -570,6 +829,78 @@ export type Database = {
           },
         ]
       }
+      student_linking_codes: {
+        Row: {
+          code: string
+          created_at: string | null
+          email_institucional: string | null
+          expires_at: string
+          google_classroom_email: string | null
+          id: string
+          is_used: boolean | null
+          student_id: string
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          email_institucional?: string | null
+          expires_at?: string
+          google_classroom_email?: string | null
+          id?: string
+          is_used?: boolean | null
+          student_id: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          email_institucional?: string | null
+          expires_at?: string
+          google_classroom_email?: string | null
+          id?: string
+          is_used?: boolean | null
+          student_id?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: []
+      }
+      sync_logs: {
+        Row: {
+          completed_at: string | null
+          error_message: string | null
+          id: string
+          records_processed: number | null
+          started_at: string | null
+          status: string
+          sync_type: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          records_processed?: number | null
+          started_at?: string | null
+          status: string
+          sync_type: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          records_processed?: number | null
+          started_at?: string | null
+          status?: string
+          sync_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       task_submissions: {
         Row: {
           attachments: Json | null
@@ -743,6 +1074,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_student_linking_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       gtrgm_compress: {
         Args: { "": unknown }
         Returns: unknown
