@@ -50,28 +50,39 @@ export const useParentClassroomData = () => {
         throw new Error('Usuario no autenticado');
       }
 
-      // Obtener los hijos del padre actual
+      // Obtener los hijos del padre actual con la información del perfil
       const { data: parentStudentData, error: parentStudentError } = await supabase
         .from('parent_student_relations')
-        .select(`
-          student_id,
-          profiles!inner(
-            id,
-            display_name,
-            email
-          )
-        `)
+        .select('student_id')
         .eq('parent_id', user.id);
 
       if (parentStudentError) {
         throw new Error(parentStudentError.message);
       }
 
-      const childrenData = parentStudentData.map(relation => ({
-        id: relation.student_id,
-        display_name: relation.profiles.display_name,
-        email: relation.profiles.email
-      }));
+      if (!parentStudentData || parentStudentData.length === 0) {
+        setChildren([]);
+        setChildrenClassroomData([]);
+        setIsLoading(false);
+        return;
+      }
+
+      // Obtener los perfiles de los estudiantes
+      const studentIds = parentStudentData.map(relation => relation.student_id);
+      const { data: studentsProfiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, display_name, email')
+        .in('id', studentIds);
+
+      if (profilesError) {
+        throw new Error(profilesError.message);
+      }
+
+      const childrenData = studentsProfiles?.map(profile => ({
+        id: profile.id,
+        display_name: profile.display_name,
+        email: profile.email
+      })) || [];
 
       setChildren(childrenData);
 
