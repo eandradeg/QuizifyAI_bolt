@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 export interface GoogleClassroomToken {
@@ -80,6 +79,30 @@ export interface GoogleClassroomSubmission {
   synced_at?: string;
   created_at: string;
   updated_at: string;
+}
+
+// Extended interface for submissions with joined data
+export interface GoogleClassroomSubmissionWithDetails extends GoogleClassroomSubmission {
+  coursework?: {
+    title: string;
+    due_date?: string;
+    max_points?: number;
+    course_id: string;
+  };
+  course?: {
+    course?: {
+      name: string;
+      section?: string;
+    };
+  };
+}
+
+// Extended interface for coursework with course details
+export interface GoogleClassroomCourseworkWithCourse extends GoogleClassroomCoursework {
+  course?: {
+    name: string;
+    section?: string;
+  };
 }
 
 export const googleClassroomService = {
@@ -177,13 +200,13 @@ export const googleClassroomService = {
       .from('google_classroom_coursework')
       .select('*')
       .eq('course_id', courseId)
-      .order('due_date', { nullsLast: true });
+      .order('due_date', { nullsFirst: false });
 
     if (error) throw new Error(error.message);
     return data || [];
   },
 
-  async getUpcomingCoursework(studentId?: string, daysAhead: number = 7) {
+  async getUpcomingCoursework(studentId?: string, daysAhead: number = 7): Promise<GoogleClassroomCourseworkWithCourse[]> {
     const { data: { user } } = await supabase.auth.getUser();
     const targetStudentId = studentId || user?.id;
     if (!targetStudentId) throw new Error('User not authenticated');
@@ -220,7 +243,7 @@ export const googleClassroomService = {
     return data;
   },
 
-  async getSubmissionsByStudent(studentId?: string) {
+  async getSubmissionsByStudent(studentId?: string): Promise<GoogleClassroomSubmissionWithDetails[]> {
     const { data: { user } } = await supabase.auth.getUser();
     const targetStudentId = studentId || user?.id;
     if (!targetStudentId) throw new Error('User not authenticated');
@@ -233,7 +256,7 @@ export const googleClassroomService = {
         course:google_classroom_coursework!inner(course:google_classroom_courses!inner(name, section))
       `)
       .eq('student_id', targetStudentId)
-      .order('update_time', { nullsLast: true });
+      .order('update_time', { nullsFirst: false });
 
     if (error) throw new Error(error.message);
     return data || [];

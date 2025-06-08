@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { studentLinkingService } from '@/services/studentLinkingService';
 import { useToast } from '@/hooks/use-toast';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import type { StudentLinkingCode } from '@/services/studentLinkingService';
 
 const StudentLinkingCodeManager: React.FC = () => {
@@ -31,8 +31,27 @@ const StudentLinkingCodeManager: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [emailInstitucional, setEmailInstitucional] = useState('');
   const [googleClassroomEmail, setGoogleClassroomEmail] = useState('');
-  const { user } = useAuthContext();
+  const [user, setUser] = useState<any>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Get user from Supabase directly
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        // Get user profile with role
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        
+        setUser(profile);
+      }
+    };
+
+    getUser();
+  }, []);
 
   useEffect(() => {
     if (user?.role === 'student') {

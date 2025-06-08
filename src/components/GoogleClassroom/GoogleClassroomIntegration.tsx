@@ -17,7 +17,11 @@ import {
 } from 'lucide-react';
 import { googleClassroomService } from '@/services/googleClassroomService';
 import { useToast } from '@/hooks/use-toast';
-import type { GoogleClassroomCourse, GoogleClassroomCoursework, GoogleClassroomSubmission } from '@/services/googleClassroomService';
+import type { 
+  GoogleClassroomCourse, 
+  GoogleClassroomCourseworkWithCourse, 
+  GoogleClassroomSubmissionWithDetails 
+} from '@/services/googleClassroomService';
 
 interface GoogleClassroomIntegrationProps {
   studentId?: string;
@@ -29,8 +33,8 @@ const GoogleClassroomIntegration: React.FC<GoogleClassroomIntegrationProps> = ({
   isParentView = false 
 }) => {
   const [courses, setCourses] = useState<GoogleClassroomCourse[]>([]);
-  const [upcomingWork, setUpcomingWork] = useState<any[]>([]);
-  const [submissions, setSubmissions] = useState<GoogleClassroomSubmission[]>([]);
+  const [upcomingWork, setUpcomingWork] = useState<GoogleClassroomCourseworkWithCourse[]>([]);
+  const [submissions, setSubmissions] = useState<GoogleClassroomSubmissionWithDetails[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasToken, setHasToken] = useState(false);
   const { toast } = useToast();
@@ -76,7 +80,7 @@ const GoogleClassroomIntegration: React.FC<GoogleClassroomIntegrationProps> = ({
     }
   };
 
-  const getSubmissionStatusBadge = (submission: GoogleClassroomSubmission) => {
+  const getSubmissionStatusBadge = (submission: GoogleClassroomSubmissionWithDetails) => {
     const state = submission.state?.toLowerCase();
     
     switch (state) {
