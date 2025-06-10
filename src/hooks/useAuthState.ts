@@ -9,10 +9,15 @@ export const useAuthState = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+
     // Get initial session
     const getInitialSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (!mounted) return;
+        
         if (error) {
           console.error('Error getting session:', error);
           setIsLoading(false);
@@ -25,7 +30,9 @@ export const useAuthState = () => {
         }
       } catch (error) {
         console.error('Error in getInitialSession:', error);
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -33,6 +40,8 @@ export const useAuthState = () => {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+      
       console.log('Auth state changed:', event, session?.user?.email);
       
       if (event === 'SIGNED_IN' && session?.user) {
@@ -42,43 +51,60 @@ export const useAuthState = () => {
         const delay = isGoogleUser ? 3000 : 1000;
         
         setTimeout(async () => {
-          await fetchUserProfile(session.user);
+          if (mounted) {
+            await fetchUserProfile(session.user);
+          }
         }, delay);
       } else if (event === 'SIGNED_OUT') {
         console.log('User signed out');
-        setUser(null);
-        setIsLoading(false);
+        if (mounted) {
+          setUser(null);
+          setIsLoading(false);
+        }
       } else if (event === 'TOKEN_REFRESHED' && session?.user) {
         console.log('Token refreshed for user:', session.user.email);
-        await fetchUserProfile(session.user);
+        if (mounted) {
+          await fetchUserProfile(session.user);
+        }
       } else {
-        setUser(null);
-        setIsLoading(false);
+        if (mounted) {
+          setUser(null);
+          setIsLoading(false);
+        }
       }
     });
 
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
-    try {
-      setIsLoading(true);
-      console.log('Fetching user profile for:', supabaseUser.email);
-      const userProfile = await authService.fetchUserProfile(supabaseUser);
-      if (userProfile) {
-        console.log('User profile loaded successfully:', userProfile.email);
-        setUser(userProfile);
-      } else {
-        console.log('No user profile found');
-        setUser(null);
+    const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
+      if (!mounted) return;
+      
+      try {
+        setIsLoading(true);
+        console.log('Fetching user profile for:', supabaseUser.email);
+        const userProfile = await authService.fetchUserProfile(supabaseUser);
+        if (userProfile && mounted) {
+          console.log('User profile loaded successfully:', userProfile.email);
+          setUser(userProfile);
+        } else if (mounted) {
+          console.log('No user profile found');
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+        if (mounted) {
+          setUser(null);
+        }
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
-    } catch (error) {
-      console.error('Failed to fetch user profile:', error);
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   return { user, setUser, isLoading, setIsLoading };
 };

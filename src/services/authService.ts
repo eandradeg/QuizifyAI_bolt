@@ -22,14 +22,21 @@ export const authService = {
   async signInWithGoogle() {
     console.log('Attempting Google sign-in');
     
-    // Get the current origin dynamically
+    // Get the current origin dynamically and ensure it's correct
     const currentOrigin = window.location.origin;
     console.log('Current origin:', currentOrigin);
+    
+    // Ensure we're using the correct protocol and port
+    const redirectUrl = currentOrigin.includes('localhost') 
+      ? `${currentOrigin}/dashboard`
+      : `${currentOrigin}/dashboard`;
+    
+    console.log('Redirect URL:', redirectUrl);
     
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${currentOrigin}/dashboard`,
+        redirectTo: redirectUrl,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -49,14 +56,21 @@ export const authService = {
   async signUpWithGoogle(role: UserRole) {
     console.log('Attempting Google sign-up with role:', role);
     
-    // Get the current origin dynamically
+    // Get the current origin dynamically and ensure it's correct
     const currentOrigin = window.location.origin;
     console.log('Current origin:', currentOrigin);
+    
+    // Ensure we're using the correct protocol and port
+    const redirectUrl = currentOrigin.includes('localhost') 
+      ? `${currentOrigin}/dashboard`
+      : `${currentOrigin}/dashboard`;
+    
+    console.log('Redirect URL:', redirectUrl);
     
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${currentOrigin}/dashboard`,
+        redirectTo: redirectUrl,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -82,6 +96,9 @@ export const authService = {
     
     // Get the current origin dynamically
     const currentOrigin = window.location.origin;
+    const redirectUrl = currentOrigin.includes('localhost') 
+      ? `${currentOrigin}/dashboard`
+      : `${currentOrigin}/dashboard`;
     
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -91,7 +108,7 @@ export const authService = {
           display_name: name,
           role: role,
         },
-        emailRedirectTo: `${currentOrigin}/dashboard`,
+        emailRedirectTo: redirectUrl,
       },
     });
 
