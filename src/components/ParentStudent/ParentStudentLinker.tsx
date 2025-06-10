@@ -1,74 +1,102 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Link, UserPlus, CheckCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { 
+  UserPlus, 
+  Check, 
+  AlertCircle, 
+  Loader2,
+  Key,
+  Calendar
+} from 'lucide-react';
 import { studentLinkingService } from '@/services/studentLinkingService';
 import { useToast } from '@/hooks/use-toast';
 
-const ParentStudentLinker: React.FC = () => {
-  const [linkingCode, setLinkingCode] = useState('');
-  const [isLinking, setIsLinking] = useState(false);
-  const [linkingSuccess, setLinkingSuccess] = useState(false);
+interface ParentStudentLinkerProps {
+  onSuccess?: () => void | Promise<void>;
+}
+
+const ParentStudentLinker: React.FC<ParentStudentLinkerProps> = ({ onSuccess }) => {
+  const [code, setCode] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
   const { toast } = useToast();
 
-  const handleLinkStudent = async () => {
-    if (!linkingCode.trim()) {
-      toast({
-        title: 'Error',
-        description: 'Por favor, ingresa un código de vinculación',
-        variant: 'destructive',
-      });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!code.trim()) {
+      setError('Por favor ingresa un código válido');
       return;
     }
 
+    setIsLoading(true);
+    setError(null);
+    setSuccess(false);
+
     try {
-      setIsLinking(true);
-      await studentLinkingService.useCodeToLink(linkingCode.trim());
+      await studentLinkingService.useCodeToLink(code.trim());
       
-      setLinkingSuccess(true);
-      setLinkingCode('');
+      setSuccess(true);
+      setCode('');
       
       toast({
-        title: 'Vinculación exitosa',
-        description: 'Te has vinculado correctamente con el estudiante',
+        title: "¡Vinculación exitosa!",
+        description: "Te has vinculado correctamente con tu hijo.",
       });
-    } catch (error: any) {
-      console.error('Error linking student:', error);
+
+      // Call onSuccess callback if provided
+      if (onSuccess) {
+        await onSuccess();
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      setError(errorMessage);
+      
       toast({
-        title: 'Error de vinculación',
-        description: error.message || 'No se pudo completar la vinculación',
-        variant: 'destructive',
+        variant: "destructive",
+        title: "Error en la vinculación",
+        description: errorMessage,
       });
     } finally {
-      setIsLinking(false);
+      setIsLoading(false);
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !isLinking) {
-      handleLinkStudent();
-    }
+  const resetForm = () => {
+    setCode('');
+    setError(null);
+    setSuccess(false);
   };
 
-  if (linkingSuccess) {
+  if (success) {
     return (
-      <Card>
-        <CardContent className="pt-6">
+      <Card className="border-green-200 bg-green-50 dark:bg-green-900/20">
+        <CardContent className="p-6">
           <div className="text-center space-y-4">
-            <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
-            <h3 className="text-lg font-semibold">¡Vinculación exitosa!</h3>
-            <p className="text-muted-foreground">
-              Te has vinculado correctamente con el estudiante. Ahora puedes ver su progreso académico.
-            </p>
+            <div className="w-12 h-12 mx-auto bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+              <Check className="w-6 h-6 text-green-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-medium text-green-900 dark:text-green-100">
+                ¡Vinculación Exitosa!
+              </h3>
+              <p className="text-sm text-green-700 dark:text-green-300">
+                Te has vinculado correctamente con tu hijo. Ahora puedes ver sus datos académicos.
+              </p>
+            </div>
             <Button 
-              onClick={() => setLinkingSuccess(false)}
-              variant="outline"
+              variant="outline" 
+              onClick={resetForm}
+              className="border-green-300 text-green-700 hover:bg-green-100"
             >
-              Vincular otro estudiante
+              <UserPlus className="w-4 h-4 mr-2" />
+              Vincular Otro Hijo
             </Button>
           </div>
         </CardContent>
@@ -77,53 +105,67 @@ const ParentStudentLinker: React.FC = () => {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Link className="w-5 h-5" />
-          Vincular Estudiante
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <Alert>
-          <AlertDescription>
-            Solicita al estudiante que te proporcione su código de vinculación para poder acceder a su progreso académico.
-          </AlertDescription>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Key className="w-4 h-4 text-muted-foreground" />
+          <label htmlFor="linking-code" className="text-sm font-medium">
+            Código de Vinculación
+          </label>
+        </div>
+        <Input
+          id="linking-code"
+          type="text"
+          placeholder="Ej: ABC123XYZ"
+          value={code}
+          onChange={(e) => setCode(e.target.value.toUpperCase())}
+          className="font-mono text-center tracking-wider"
+          maxLength={9}
+          disabled={isLoading}
+        />
+        <p className="text-xs text-muted-foreground">
+          Ingresa el código de 9 caracteres que tu hijo generó en su cuenta
+        </p>
+      </div>
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
         </Alert>
-        
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="linking-code">Código de Vinculación</Label>
-            <Input
-              id="linking-code"
-              type="text"
-              value={linkingCode}
-              onChange={(e) => setLinkingCode(e.target.value.toUpperCase())}
-              onKeyPress={handleKeyPress}
-              placeholder="Ejemplo: AB12CD"
-              maxLength={6}
-              className="uppercase font-mono text-center text-lg"
-              disabled={isLinking}
-            />
-          </div>
-          
-          <Button 
-            onClick={handleLinkStudent}
-            disabled={isLinking || !linkingCode.trim()}
-            className="w-full"
-          >
+      )}
+
+      <Button 
+        type="submit" 
+        className="w-full" 
+        disabled={isLoading || !code.trim()}
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Vinculando...
+          </>
+        ) : (
+          <>
             <UserPlus className="w-4 h-4 mr-2" />
-            {isLinking ? 'Vinculando...' : 'Vincular Estudiante'}
-          </Button>
-        </div>
-        
-        <div className="text-xs text-muted-foreground space-y-1">
-          <p>• Los códigos son únicos y de un solo uso</p>
-          <p>• Los códigos expiran automáticamente después de 7 días</p>
-          <p>• Una vez usado, el código no puede ser utilizado nuevamente</p>
-        </div>
-      </CardContent>
-    </Card>
+            Vincular con Hijo
+          </>
+        )}
+      </Button>
+
+      <div className="mt-6 p-4 bg-muted rounded-lg">
+        <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+          <Calendar className="w-4 h-4" />
+          Instrucciones:
+        </h4>
+        <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside">
+          <li>Tu hijo debe iniciar sesión en la plataforma</li>
+          <li>Debe ir a su perfil y generar un código de vinculación</li>
+          <li>El código tiene una validez de 7 días</li>
+          <li>Ingresa el código exactamente como aparece</li>
+        </ol>
+      </div>
+    </form>
   );
 };
 
