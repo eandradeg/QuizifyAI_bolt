@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import type { User, UserRole, UserProfile } from '@/types/auth';
@@ -22,10 +21,15 @@ export const authService = {
 
   async signInWithGoogle() {
     console.log('Attempting Google sign-in');
+    
+    // Get the current origin dynamically
+    const currentOrigin = window.location.origin;
+    console.log('Current origin:', currentOrigin);
+    
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/dashboard`,
+        redirectTo: `${currentOrigin}/dashboard`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -44,10 +48,15 @@ export const authService = {
 
   async signUpWithGoogle(role: UserRole) {
     console.log('Attempting Google sign-up with role:', role);
+    
+    // Get the current origin dynamically
+    const currentOrigin = window.location.origin;
+    console.log('Current origin:', currentOrigin);
+    
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/dashboard`,
+        redirectTo: `${currentOrigin}/dashboard`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -70,6 +79,10 @@ export const authService = {
 
   async signUp(email: string, password: string, name: string, role: UserRole) {
     console.log('Attempting registration for:', email, 'with role:', role);
+    
+    // Get the current origin dynamically
+    const currentOrigin = window.location.origin;
+    
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -78,7 +91,7 @@ export const authService = {
           display_name: name,
           role: role,
         },
-        emailRedirectTo: `${window.location.origin}/dashboard`,
+        emailRedirectTo: `${currentOrigin}/dashboard`,
       },
     });
 
