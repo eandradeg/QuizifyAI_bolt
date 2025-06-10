@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
@@ -16,15 +15,16 @@ export const useAuthState = () => {
         const { data: { session }, error } = await supabase.auth.getSession();
         if (error) {
           console.error('Error getting session:', error);
+          setIsLoading(false);
         } else if (session?.user) {
           console.log('Initial session found for user:', session.user.email);
           await fetchUserProfile(session.user);
         } else {
           console.log('No initial session found');
+          setIsLoading(false);
         }
       } catch (error) {
         console.error('Error in getInitialSession:', error);
-      } finally {
         setIsLoading(false);
       }
     };

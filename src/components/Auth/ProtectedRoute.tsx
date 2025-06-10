@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -22,14 +21,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     if (!isLoading) {
       if (requireAuth && !user) {
         console.log('User not authenticated, redirecting to:', redirectTo);
-        navigate(redirectTo);
+        navigate(redirectTo, { replace: true });
       } else if (!requireAuth && user) {
         console.log('User already authenticated, redirecting to dashboard');
-        navigate('/dashboard');
+        navigate('/dashboard', { replace: true });
       }
     }
   }, [user, isLoading, navigate, requireAuth, redirectTo]);
 
+  // Show loading spinner while checking authentication
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
@@ -38,15 +38,18 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  if (requireAuth && !user) {
-    return null;
+  // For pages that don't require auth (like login), show content if user is not authenticated
+  if (!requireAuth && !user) {
+    return <>{children}</>;
   }
 
-  if (!requireAuth && user) {
-    return null;
+  // For pages that require auth, show content if user is authenticated
+  if (requireAuth && user) {
+    return <>{children}</>;
   }
 
-  return <>{children}</>;
+  // Don't render anything while redirecting
+  return null;
 };
 
 export default ProtectedRoute;
