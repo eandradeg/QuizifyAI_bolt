@@ -22,9 +22,18 @@ export const authService = {
   async signInWithGoogle() {
     console.log('Attempting Google sign-in');
     
-    // Get the current URL and construct the redirect URL properly for Bolt environment
+    // Get the current URL and construct the redirect URL properly
     const currentUrl = window.location.href;
-    const baseUrl = currentUrl.split('?')[0].replace(/\/$/, '');
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    
+    // Construct base URL with current port
+    let baseUrl = `${protocol}//${hostname}`;
+    if (port && port !== '80' && port !== '443') {
+      baseUrl += `:${port}`;
+    }
+    
     const redirectUrl = `${baseUrl}/dashboard`;
     
     console.log('Current URL:', currentUrl);
@@ -53,9 +62,18 @@ export const authService = {
   async signUpWithGoogle(role: UserRole) {
     console.log('Attempting Google sign-up with role:', role);
     
-    // Get the current URL and construct the redirect URL properly for Bolt environment
+    // Get the current URL and construct the redirect URL properly
     const currentUrl = window.location.href;
-    const baseUrl = currentUrl.split('?')[0].replace(/\/$/, '');
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    
+    // Construct base URL with current port
+    let baseUrl = `${protocol}//${hostname}`;
+    if (port && port !== '80' && port !== '443') {
+      baseUrl += `:${port}`;
+    }
+    
     const redirectUrl = `${baseUrl}/dashboard`;
     
     console.log('Current URL:', currentUrl);
@@ -88,9 +106,18 @@ export const authService = {
   async signUp(email: string, password: string, name: string, role: UserRole) {
     console.log('Attempting registration for:', email, 'with role:', role);
     
-    // Get the current URL and construct the redirect URL properly for Bolt environment
+    // Get the current URL and construct the redirect URL properly
     const currentUrl = window.location.href;
-    const baseUrl = currentUrl.split('?')[0].replace(/\/$/, '');
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    
+    // Construct base URL with current port
+    let baseUrl = `${protocol}//${hostname}`;
+    if (port && port !== '80' && port !== '443') {
+      baseUrl += `:${port}`;
+    }
+    
     const redirectUrl = `${baseUrl}/dashboard`;
     
     const { data, error } = await supabase.auth.signUp({
